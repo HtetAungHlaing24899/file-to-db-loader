@@ -46,6 +46,18 @@ def db_loader(src_base_dir, db_conn_uri, ds_name):
             print(f'Populating chunk {idx} of {ds_name}')
             to_sql(df, db_conn_uri, ds_name)
 
+# module to process data using multiprocessing
+def process_dataset(args):
+    src_base_dir = args[0]
+    db_conn_uri = args[1]
+    ds_name = args[2]
+    try:
+        print(f'Processing {ds_name}')
+        db_loader(src_base_dir, db_conn_uri, ds_name)
+    except NameError as ne:
+        print(ne)
+        pass
+
 # module to get env variables and process files
 def process_files(ds_names=None):
     src_base_dir = os.environ.get('SRC_BASE_DIR')
@@ -59,12 +71,7 @@ def process_files(ds_names=None):
     if not ds_names:
         ds_names = schemas.keys()
     for ds_name in ds_names:
-        try:
-            print(f'Processing {ds_name}')
-            db_loader(src_base_dir, db_conn_uri, ds_name)
-        except NameError as ne:
-            print(ne)
-            pass
+        process_dataset((src_base_dir, db_conn_uri, ds_name))
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
