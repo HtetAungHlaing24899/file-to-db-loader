@@ -29,7 +29,8 @@ def to_sql(df, db_conn_uri, ds_name):
         ds_name,
         db_conn_uri,
         if_exists='append',
-        index=False
+        index=False,
+        method='multi'
     )
 
 # module to load data into db
